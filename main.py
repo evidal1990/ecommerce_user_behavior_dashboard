@@ -27,32 +27,20 @@ _KPI_HEADER_HEIGHT = "3.5rem"
 # Sidebar: títulos de secção um pouco maiores que o corpo (proporção ~1.125 : 1)
 _SIDEBAR_FS_TITLE = "1.125rem"
 _SIDEBAR_FS_BODY = "1rem"
-# Espaço entre o título "Navegação" e o primeiro item do rádio
+# Espaço entre o título "Navegação" e o primeiro item do menu
 _NAV_TITLE_GAP_BELOW = "1.75rem"
 icon_html_header = _header_icon_img_html()
 
-# Navegação: lista de páginas (rótulo guardado em session_state)
+# Navegação: (rótulo, ícone Material)
 _NAV_PAGES: tuple[tuple[str, str], ...] = (
     ("Visão Geral", ":material/home:"),
     ("KPIs Descritivos", ":material/description:"),
     ("KPIs Comportamentais", ":material/psychology:"),
     ("KPIs Operacionais", ":material/table_chart:"),
     ("KPIs Estratégicos", ":material/military_tech:"),
+    ("Assistente de Análise", ":material/smart_toy:"),
 )
 _NAV_LABELS: list[str] = [p[0] for p in _NAV_PAGES]
-_NAV_EMOJI: dict[str, str] = {
-    "Visão Geral": "🏠",
-    "KPIs Descritivos": "📝",
-    "KPIs Comportamentais": "🧠",
-    "KPIs Operacionais": "📦",
-    "KPIs Estratégicos": "🎖️",
-}
-
-
-def _format_nav_radio_label(option: str) -> str:
-    em = _NAV_EMOJI.get(option, "•")
-    return f"{em}  {option}"
-
 
 if "page" not in st.session_state:
     st.session_state.page = _NAV_LABELS[0]
@@ -67,71 +55,84 @@ st.html(
         padding-top: 0.75rem !important;
         padding-bottom: 0.75rem !important;
     }}
-    /* Navegação: pouco espaço entre blocos */
+    /* Menu vertical: botões + ícones Material, alinhados à esquerda */
     section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {{
-        gap: 0.35rem !important;
+        gap: 0.25rem !important;
     }}
     section[data-testid="stSidebar"] .element-container {{
         margin: 0 !important;
         padding: 0 !important;
     }}
-    /*
-      st.radio em vez de st.button: o hover em <label> é nativo do browser,
-      por isso funciona logo — os botões Streamlit/Base Web costumam só reagir bem ao hover
-      depois de o iframe/documento receber foco (1.º clique).
-    */
-    section[data-testid="stSidebar"] [data-testid="stRadio"] [role="radiogroup"] {{
-        gap: 0.4rem !important;
-        width: 100% !important;
-        font-size: {_SIDEBAR_FS_BODY} !important;
-    }}
-    section[data-testid="stSidebar"] [data-testid="stRadio"] label[data-baseweb="radio"] {{
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
+    section[data-testid="stSidebar"] .stButton > button {{
         justify-content: flex-start !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        padding: 0.45rem 0.55rem !important;
-        margin: 0 !important;
-        border-radius: 6px !important;
-        border: 1px solid #e0e4ec !important;
+        align-items: center !important;
+        text-align: left !important;
         font-weight: 500 !important;
+        border-radius: 8px !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 0.45rem 0.55rem !important;
         font-size: {_SIDEBAR_FS_BODY} !important;
         line-height: 1.35 !important;
-        color: #1e3a5f !important;
-        cursor: pointer !important;
+        gap: 0.45rem !important;
+        width: 100% !important;
     }}
-    section[data-testid="stSidebar"] [data-testid="stRadio"] label[data-baseweb="radio"]:hover {{
+    section[data-testid="stSidebar"] .stButton > button > div {{
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        width: 100% !important;
+        flex-direction: row !important;
+    }}
+    section[data-testid="stSidebar"] .stButton > button p {{
+        text-align: left !important;
+        margin: 0 !important;
+        color: #1d2939 !important;
+    }}
+    section[data-testid="stSidebar"] .stButton > button svg,
+    section[data-testid="stSidebar"] .stButton > button [data-testid="stIconMaterial"] {{
+        width: 1.15rem !important;
+        height: 1.15rem !important;
+        flex-shrink: 0 !important;
+    }}
+    section[data-testid="stSidebar"] .stButton > button[kind="secondary"],
+    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-secondary"] {{
+        background-color: transparent !important;
+        color: #1d2939 !important;
+        border: 1px solid transparent !important;
+    }}
+    section[data-testid="stSidebar"] .stButton > button[kind="primary"],
+    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"] {{
+        background-color: #e8eaf6 !important;
+        color: #1d2939 !important;
+        border: 1px solid #d1d5f0 !important;
+    }}
+    section[data-testid="stSidebar"] .stButton > button[kind="primary"] p,
+    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"] p {{
+        color: #1d2939 !important;
+    }}
+    section[data-testid="stSidebar"] .stButton > button[kind="primary"] svg,
+    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"] svg {{
+        fill: #1d2939 !important;
+        color: #1d2939 !important;
+    }}
+    section[data-testid="stSidebar"] .stButton:hover > button[kind="secondary"],
+    section[data-testid="stSidebar"] .stButton > button[kind="secondary"]:hover,
+    section[data-testid="stSidebar"] .stButton:hover > button[data-testid="baseButton-secondary"],
+    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-secondary"]:hover {{
         background-color: #f0f2f6 !important;
     }}
-    section[data-testid="stSidebar"] [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {{
-        background-color: #e8eaf6 !important;
-        border-color: #d1d5f0 !important;
-    }}
-    section[data-testid="stSidebar"] [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked):hover {{
+    section[data-testid="stSidebar"] .stButton:hover > button[kind="primary"],
+    section[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover,
+    section[data-testid="stSidebar"] .stButton:hover > button[data-testid="baseButton-primary"],
+    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"]:hover {{
         background-color: #dde1f5 !important;
     }}
-    /* Fallback: filhos diretos do radiogroup (estrutura Base Web) */
-    section[data-testid="stSidebar"] [role="radiogroup"] > label {{
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        padding: 0.45rem 0.55rem !important;
-        border-radius: 6px !important;
-        border: 1px solid #e0e4ec !important;
-        font-size: {_SIDEBAR_FS_BODY} !important;
-        line-height: 1.35 !important;
-        color: #1e3a5f !important;
-    }}
-    section[data-testid="stSidebar"] [role="radiogroup"] > label:hover {{
-        background-color: #f0f2f6 !important;
-    }}
-    section[data-testid="stSidebar"] [role="radiogroup"] > label:has(input:checked) {{
-        background-color: #e8eaf6 !important;
-        border-color: #d1d5f0 !important;
+    /* Separadores finos entre itens */
+    section[data-testid="stSidebar"] hr {{
+        margin: 0.15rem 0 !important;
+        border: none !important;
+        border-top: 1px solid #e8eaed !important;
     }}
     /* Títulos "Navegação" / "Segmentar por" */
     section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div:nth-child(1) [data-testid="stMarkdownContainer"] p {{
@@ -139,14 +140,10 @@ st.html(
         font-size: {_SIDEBAR_FS_TITLE} !important;
         line-height: 1.35 !important;
     }}
-    section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div:nth-child(3) [data-testid="stMarkdownContainer"] p {{
-        font-size: {_SIDEBAR_FS_TITLE} !important;
-        line-height: 1.35 !important;
-    }}
     section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {{
         line-height: 1.3 !important;
     }}
-    /* Select "Segmentar por": mesmo tamanho de texto que os rádios */
+    /* Select "Segmentar por": mesmo tamanho que o menu */
     section[data-testid="stSidebar"] [data-testid="stSelectbox"] label,
     section[data-testid="stSidebar"] [data-testid="stSelectbox"] [data-baseweb="select"] {{
         font-size: {_SIDEBAR_FS_BODY} !important;
@@ -186,27 +183,27 @@ st.sidebar.markdown(
     f"<p style='font-weight:700;margin:0;font-size:{_SIDEBAR_FS_TITLE};'>Navegação</p>",
     unsafe_allow_html=True,
 )
-try:
-    _nav_idx = _NAV_LABELS.index(st.session_state.page)
-except ValueError:
-    _nav_idx = 0
+for i, (label, mat_icon) in enumerate(_NAV_PAGES):
+    if i > 0:
+        st.sidebar.divider()
+    is_active = st.session_state.page == label
+    if st.sidebar.button(
+        label,
+        key=f"kpi_nav_{i}",
+        icon=mat_icon,
+        use_container_width=True,
+        type="primary" if is_active else "secondary",
+    ):
+        st.session_state.page = label
 
-page = st.sidebar.radio(
-    "kpi_nav_widget",
-    _NAV_LABELS,
-    index=_nav_idx,
-    format_func=_format_nav_radio_label,
-    label_visibility="collapsed",
-    key="kpi_nav_radio",
-    horizontal=False,
-    width="stretch",
-)
-st.session_state.page = page
+page = st.session_state.page
 
 st.sidebar.markdown(
     f"<p style='font-weight:700;margin:1.25rem 0 1.25rem 0;font-size:{_SIDEBAR_FS_TITLE};'>Segmentar por</p>",
     unsafe_allow_html=True,
 )
+if "segment" not in st.session_state:
+    st.session_state.segment = "País"
 segment = st.sidebar.selectbox(
     "segmentar_por",
     [
@@ -214,7 +211,11 @@ segment = st.sidebar.selectbox(
         "Faixa Etária",
         "Faixa de Renda",
     ],
-    index=0,
+    index=[
+        "País",
+        "Faixa Etária",
+        "Faixa de Renda",
+    ].index(st.session_state.segment),
     label_visibility="collapsed",
 )
 
