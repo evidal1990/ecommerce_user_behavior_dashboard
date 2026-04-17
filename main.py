@@ -42,6 +42,12 @@ _NAV_PAGES: tuple[tuple[str, str], ...] = (
 )
 _NAV_LABELS: list[str] = [p[0] for p in _NAV_PAGES]
 
+_SEGMENT_OPTIONS: tuple[str, ...] = (
+    "País",
+    "Faixa Etária",
+    "Faixa de Renda",
+)
+
 if "page" not in st.session_state:
     st.session_state.page = _NAV_LABELS[0]
 
@@ -203,20 +209,16 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 if "segment" not in st.session_state:
-    st.session_state.segment = "País"
+    st.session_state.segment = _SEGMENT_OPTIONS[0]
+_seg = st.session_state.segment
+if isinstance(_seg, list):
+    st.session_state.segment = _seg[0] if _seg else _SEGMENT_OPTIONS[0]
+elif _seg not in _SEGMENT_OPTIONS:
+    st.session_state.segment = _SEGMENT_OPTIONS[0]
+
 segment = st.sidebar.selectbox(
     "segmentar_por",
-    [
-        "País",
-        "Faixa Etária",
-        "Faixa de Renda",
-    ],
-    index=[
-        "País",
-        "Faixa Etária",
-        "Faixa de Renda",
-    ].index(st.session_state.segment),
+    _SEGMENT_OPTIONS,
+    key="segment",
     label_visibility="collapsed",
 )
-
-st.session_state.segment = segment
