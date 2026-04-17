@@ -1,8 +1,37 @@
 """Constantes e mapeamentos da aplicação."""
 
+import os
 from pathlib import Path
 
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
+
+
+def load_project_env() -> None:
+    """Carrega o primeiro .env encontrado (raiz do projeto ou cwd)."""
+    for path in (BASE_DIR / ".env", Path.cwd() / ".env"):
+        if not path.is_file():
+            continue
+        try:
+            raw = path.read_text(encoding="utf-8-sig")
+        except OSError:
+            continue
+        for line in raw.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip()
+            if len(val) >= 2 and val[0] == val[-1] and val[0] in "\"'":
+                val = val[1:-1]
+            if key:
+                os.environ[key] = val
+        return
+
+
+load_project_env()
 HEADER_ICON: Path = BASE_DIR / "icons" / "header-bar-icon.png"
 
 PAGE_TITLE = "Dashboard de KPIs de Usuários de E-commerce"
