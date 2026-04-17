@@ -48,6 +48,24 @@ _NAV_ICONS: list[str] = [
     "robot",
 ]
 
+# Rotas na URL via query string: ?page=kpis-descritivos (Streamlit não usa path /kpis... num único ficheiro)
+_PAGE_SLUGS: dict[str, str] = {
+    "Visão Geral": "visao-geral",
+    "KPIs Descritivos": "kpis-descritivos",
+    "KPIs Comportamentais": "kpis-comportamentais",
+    "KPIs Operacionais": "kpis-operacionais",
+    "KPIs Estratégicos": "kpis-estrategicos",
+    "Assistente de Análise": "assistente-analise",
+}
+_SLUG_TO_LABEL: dict[str, str] = {s: t for t, s in _PAGE_SLUGS.items()}
+
+
+def _query_param_page_slug() -> str | None:
+    v = st.query_params.get("page")
+    if not v:
+        return None
+    return v[0] if isinstance(v, list) else str(v)
+
 
 def _option_menu_styles() -> dict:
     return {
@@ -161,9 +179,16 @@ st.html(
     unsafe_allow_javascript=True,
 )
 
-_default_nav = 0
-if st.session_state.page in _NAV_LABELS:
-    _default_nav = _NAV_LABELS.index(st.session_state.page)
+slug = _query_param_page_slug()
+if slug and slug in _SLUG_TO_LABEL:
+    _nav_for_index = _SLUG_TO_LABEL[slug]
+else:
+    _nav_for_index = (
+        st.session_state.page
+        if st.session_state.page in _NAV_LABELS
+        else _NAV_LABELS[0]
+    )
+_default_nav = _NAV_LABELS.index(_nav_for_index)
 
 with st.sidebar:
     st.markdown(
@@ -181,6 +206,7 @@ with st.sidebar:
         key="kpi_option_menu",
     )
 st.session_state.page = selected_page
+st.query_params["page"] = _PAGE_SLUGS[selected_page]
 page = st.session_state.page
 
 st.sidebar.markdown(
