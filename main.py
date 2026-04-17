@@ -2,6 +2,7 @@ import base64
 from pathlib import Path
 
 import streamlit as st
+from streamlit_option_menu import option_menu
 
 _BASE_DIR = Path(__file__).resolve().parent
 _HEADER_ICON = _BASE_DIR / "icons" / "header-bar-icon.png"
@@ -27,20 +28,53 @@ _KPI_HEADER_HEIGHT = "3.5rem"
 # Sidebar: títulos de secção um pouco maiores que o corpo (proporção ~1.125 : 1)
 _SIDEBAR_FS_TITLE = "1.125rem"
 _SIDEBAR_FS_BODY = "1rem"
-# Espaço entre o título "Navegação" e o primeiro item do menu
-_NAV_TITLE_GAP_BELOW = "1.75rem"
 icon_html_header = _header_icon_img_html()
 
-# Navegação: (rótulo, ícone Material)
-_NAV_PAGES: tuple[tuple[str, str], ...] = (
-    ("Visão Geral", ":material/home:"),
-    ("KPIs Descritivos", ":material/description:"),
-    ("KPIs Comportamentais", ":material/psychology:"),
-    ("KPIs Operacionais", ":material/table_chart:"),
-    ("KPIs Estratégicos", ":material/military_tech:"),
-    ("Assistente de Análise", ":material/smart_toy:"),
-)
-_NAV_LABELS: list[str] = [p[0] for p in _NAV_PAGES]
+# Navegação: ícones Bootstrap Icons (streamlit_option_menu)
+_NAV_LABELS: list[str] = [
+    "Visão Geral",
+    "KPIs Descritivos",
+    "KPIs Comportamentais",
+    "KPIs Operacionais",
+    "KPIs Estratégicos",
+    "Assistente de Análise",
+]
+_NAV_ICONS: list[str] = [
+    "house",
+    "file-earmark-text",
+    "diagram-3",
+    "table",
+    "award",
+    "robot",
+]
+
+
+def _option_menu_styles() -> dict:
+    return {
+        "container": {
+            "padding": "0!important",
+            "background-color": "transparent",
+            "width": "100%",
+        },
+        "icon": {"color": "#1d2939", "font-size": "1.1rem"},
+        "nav-link": {
+            "font-size": _SIDEBAR_FS_BODY,
+            "text-align": "left",
+            "margin": "0.15rem 0",
+            "padding": "0.45rem 0.55rem",
+            "border-radius": "8px",
+            "color": "#1d2939",
+            "--hover-color": "#f0f2f6",
+        },
+        "nav-link-selected": {
+            "background-color": "#e8eaf6",
+            "color": "#1d2939",
+            "font-weight": "500",
+            "border": "1px solid #d1d5f0",
+            "border-radius": "8px",
+        },
+    }
+
 
 _SEGMENT_OPTIONS: tuple[str, ...] = (
     "País",
@@ -54,6 +88,11 @@ if "page" not in st.session_state:
 st.html(
     f"""
 <style>
+    /* Sidebar fixa: sem colapsar pela barra lateral nem pelo controlo do cabeçalho da app */
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="collapsedControl"] {{
+        display: none !important;
+    }}
     [data-testid="stAppViewContainer"] {{
         padding-top: {_KPI_HEADER_HEIGHT} !important;
     }}
@@ -61,95 +100,12 @@ st.html(
         padding-top: 0.75rem !important;
         padding-bottom: 0.75rem !important;
     }}
-    /* Menu vertical: botões + ícones Material, alinhados à esquerda */
     section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {{
         gap: 0.25rem !important;
-    }}
-    section[data-testid="stSidebar"] .element-container {{
-        margin: 0 !important;
-        padding: 0 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button {{
-        justify-content: flex-start !important;
-        align-items: center !important;
-        text-align: left !important;
-        font-weight: 500 !important;
-        border-radius: 8px !important;
-        min-height: 0 !important;
-        height: auto !important;
-        padding: 0.45rem 0.55rem !important;
-        font-size: {_SIDEBAR_FS_BODY} !important;
-        line-height: 1.35 !important;
-        gap: 0.45rem !important;
-        width: 100% !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button > div {{
-        display: flex !important;
-        justify-content: flex-start !important;
-        align-items: center !important;
-        width: 100% !important;
-        flex-direction: row !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button p {{
-        text-align: left !important;
-        margin: 0 !important;
-        color: #1d2939 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button svg,
-    section[data-testid="stSidebar"] .stButton > button [data-testid="stIconMaterial"] {{
-        width: 1.15rem !important;
-        height: 1.15rem !important;
-        flex-shrink: 0 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button[kind="secondary"],
-    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-secondary"] {{
-        background-color: transparent !important;
-        color: #1d2939 !important;
-        border: 1px solid transparent !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button[kind="primary"],
-    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"] {{
-        background-color: #e8eaf6 !important;
-        color: #1d2939 !important;
-        border: 1px solid #d1d5f0 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button[kind="primary"] p,
-    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"] p {{
-        color: #1d2939 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton > button[kind="primary"] svg,
-    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"] svg {{
-        fill: #1d2939 !important;
-        color: #1d2939 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton:hover > button[kind="secondary"],
-    section[data-testid="stSidebar"] .stButton > button[kind="secondary"]:hover,
-    section[data-testid="stSidebar"] .stButton:hover > button[data-testid="baseButton-secondary"],
-    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-secondary"]:hover {{
-        background-color: #f0f2f6 !important;
-    }}
-    section[data-testid="stSidebar"] .stButton:hover > button[kind="primary"],
-    section[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover,
-    section[data-testid="stSidebar"] .stButton:hover > button[data-testid="baseButton-primary"],
-    section[data-testid="stSidebar"] .stButton > button[data-testid="baseButton-primary"]:hover {{
-        background-color: #dde1f5 !important;
-    }}
-    /* Separadores finos entre itens */
-    section[data-testid="stSidebar"] hr {{
-        margin: 0.15rem 0 !important;
-        border: none !important;
-        border-top: 1px solid #e8eaed !important;
-    }}
-    /* Títulos "Navegação" / "Segmentar por" */
-    section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div:nth-child(1) [data-testid="stMarkdownContainer"] p {{
-        margin: 0 0 {_NAV_TITLE_GAP_BELOW} 0 !important;
-        font-size: {_SIDEBAR_FS_TITLE} !important;
-        line-height: 1.35 !important;
     }}
     section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {{
         line-height: 1.3 !important;
     }}
-    /* Select "Segmentar por": mesmo tamanho que o menu */
     section[data-testid="stSidebar"] [data-testid="stSelectbox"] label,
     section[data-testid="stSidebar"] [data-testid="stSelectbox"] [data-baseweb="select"] {{
         font-size: {_SIDEBAR_FS_BODY} !important;
@@ -157,6 +113,26 @@ st.html(
     section[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div {{
         font-size: {_SIDEBAR_FS_BODY} !important;
         min-height: 2.5rem !important;
+    }}
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"],
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div {{
+        cursor: pointer !important;
+    }}
+    /* Segmentar por: seta (chevron) mais visível ao hover */
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div:first-child {{
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+        border-radius: 8px;
+    }}
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"]:hover div[data-baseweb="select"] > div:first-child {{
+        background-color: #f0f2f6 !important;
+    }}
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] div[data-baseweb="select"] svg {{
+        transition: transform 0.15s ease, opacity 0.15s ease;
+        opacity: 0.55;
+    }}
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"]:hover div[data-baseweb="select"] svg {{
+        opacity: 1;
+        transform: translateY(2px);
     }}
 </style>
 <div style="
@@ -185,23 +161,26 @@ st.html(
     unsafe_allow_javascript=True,
 )
 
-st.sidebar.markdown(
-    f"<p style='font-weight:700;margin:0;font-size:{_SIDEBAR_FS_TITLE};'>Navegação</p>",
-    unsafe_allow_html=True,
-)
-for i, (label, mat_icon) in enumerate(_NAV_PAGES):
-    if i > 0:
-        st.sidebar.divider()
-    is_active = st.session_state.page == label
-    if st.sidebar.button(
-        label,
-        key=f"kpi_nav_{i}",
-        icon=mat_icon,
-        use_container_width=True,
-        type="primary" if is_active else "secondary",
-    ):
-        st.session_state.page = label
+_default_nav = 0
+if st.session_state.page in _NAV_LABELS:
+    _default_nav = _NAV_LABELS.index(st.session_state.page)
 
+with st.sidebar:
+    st.markdown(
+        f"<p style='font-weight:700;margin:0 0 1.75rem 0;margin-top: -2.75rem;font-size:{_SIDEBAR_FS_TITLE};line-height:1.35;'>Menu</p>",
+        unsafe_allow_html=True,
+    )
+    selected_page = option_menu(
+        "",
+        _NAV_LABELS,
+        icons=_NAV_ICONS,
+        menu_icon=None,
+        default_index=_default_nav,
+        orientation="vertical",
+        styles=_option_menu_styles(),
+        key="kpi_option_menu",
+    )
+st.session_state.page = selected_page
 page = st.session_state.page
 
 st.sidebar.markdown(
