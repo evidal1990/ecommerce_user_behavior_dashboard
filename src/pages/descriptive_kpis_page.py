@@ -1,5 +1,5 @@
 import streamlit as st
-from src.services.users import UsersApiClient
+from src.clients.user_api_client import UsersApiClient
 
 
 def render() -> None:

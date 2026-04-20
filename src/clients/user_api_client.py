@@ -1,4 +1,4 @@
-from src.services.api import BaseApiClient
+from src.clients.base_api_client import BaseApiClient
 
 USERS_KPI_TYPE = "users"
 
