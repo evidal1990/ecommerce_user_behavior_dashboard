@@ -22,7 +22,7 @@ class UserApiClient(BaseApiClient):
             params={"group_by": "brand_loyalty_score"},
         )
 
-    def fetch_users_by_coupon_usage(self) -> list[dict]:
+    def fetch_users_by_browse_to_buy_ratio(self) -> list[dict]:
         return self.fetch_data(
             USERS_KPI_TYPE,
             params={"group_by": "browse_to_buy_ratio"},
@@ -154,7 +154,7 @@ class UserApiClient(BaseApiClient):
             params={"group_by": "premium_adoption_by_annual_income"},
         )
 
-    def fetch_users_by_premium_adoption_by_neighborhood(self) -> list[dict]:
+    def fetch_users_by_neighborhood(self) -> list[dict]:
         return self.fetch_data(
             USERS_KPI_TYPE,
             params={"group_by": "neighborhood"},
