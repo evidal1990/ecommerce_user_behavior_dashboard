@@ -1,6 +1,47 @@
 import os
 import requests
+import streamlit as st
+
 from src.config import load_project_env
+
+
+def _requests_verify() -> bool:
+    return os.getenv("REQUESTS_VERIFY", "true").lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+
+
+def _params_key(params: dict | None) -> tuple[tuple[str, str], ...]:
+    if not params:
+        return ()
+    return tuple(sorted((str(k), str(v)) for k, v in params.items()))
+
+
+_CACHE_TTL_SECONDS = int(os.getenv("API_CACHE_TTL_SECONDS", "600"))
+
+
+@st.cache_data(ttl=_CACHE_TTL_SECONDS)
+def _cached_api_get(
+    api_base_url: str,
+    api_key: str,
+    endpoint: str,
+    params_key: tuple[tuple[str, str], ...],
+    verify: bool,
+) -> list[dict]:
+    params = dict(params_key) if params_key else {}
+    segment = endpoint.strip().strip("/")
+    base = api_base_url.rstrip("/")
+    response = requests.get(
+        f"{base}/{segment}",
+        params=params,
+        headers={"x-api-key": api_key},
+        verify=verify,
+    )
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch data from API: {response.status_code}")
+    return response.json()
 
 
 class BaseApiClient:
@@ -12,13 +53,6 @@ class BaseApiClient:
         self.headers = {
             "x-api-key": self.api_key,
         }
-        self.session = requests.Session()
-        self.session.headers.update(self.headers)
-        self.session.verify = os.getenv("REQUESTS_VERIFY", "true").lower() in (
-            "1",
-            "true",
-            "yes",
-        )
 
     def _api_key(self) -> str:
         load_project_env()
@@ -61,12 +95,10 @@ class BaseApiClient:
         return base
 
     def fetch_data(self, endpoint: str, params: dict | None = None) -> list[dict]:
-        segment = endpoint.strip().strip("/")
-        response = self.session.get(
-            f"{self.api_base_url}/{segment}",
-            params=params or {},
-            headers=self.headers,
+        return _cached_api_get(
+            self.api_base_url,
+            self.api_key,
+            endpoint,
+            _params_key(params),
+            _requests_verify(),
         )
-        if response.status_code != 200:
-            raise Exception(f"Failed to fetch data from API: {response.status_code}")
-        return response.json()
