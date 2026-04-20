@@ -3,7 +3,7 @@ from src.clients.base_api_client import BaseApiClient
 USERS_KPI_TYPE = "users"
 
 
-class UsersApiClient(BaseApiClient):
+class UserApiClient(BaseApiClient):
     def fetch_users_by_age_group(self) -> list[dict]:
         return self.fetch_data(
             USERS_KPI_TYPE,
