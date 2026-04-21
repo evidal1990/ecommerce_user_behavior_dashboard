@@ -5,15 +5,15 @@ def format_val(value: float) -> str:
     return f"{value:.1f}".rstrip("0").rstrip(".")
 
 
-SUFFIXES = {
-    1_000: "K",
-    1_000_000: "M",
-    1_000_000_000: "B",
-}
+SUFFIXES = [
+    (1_000_000_000, "B"),
+    (1_000_000, "M"),
+    (1_000, "K"),
+]
 
 
 def format_number(value: int) -> str:
-    for threshold, suffix in SUFFIXES.items():
+    for threshold, suffix in SUFFIXES:
         if value >= threshold:
             return f"{format_val(value / threshold)}{suffix}"
     return str(value)
