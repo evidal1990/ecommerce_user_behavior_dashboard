@@ -73,7 +73,7 @@ def inject_layout_styles_and_header(icon_html: str) -> None:
     width: 100%;
     z-index: 1000020;
     box-sizing: border-box;
-    background-color: #E14D55;
+    background: linear-gradient(180deg, #374151 0%, #1F2937 100%);
     color: #ffffff;
     padding: 14px 20px;
     font-size: 1.35rem;

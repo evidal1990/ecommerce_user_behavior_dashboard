@@ -1,7 +1,7 @@
 """Conteúdo da área principal (por página)."""
 
 from src.consts.page_enum import Page
-from src.pages.overview_page import render as render_overview_page
+from src.pages.overview_page import OverviewPage
 from src.pages.descriptive_kpis_page import render as render_descriptive_kpis_page
 from src.pages.behavioral_kpis_page import render as render_behavioral_kpis_page
 from src.pages.operational_kpis_page import render as render_operational_kpis_page
@@ -11,7 +11,7 @@ from src.pages.assistant_analysis_page import render as render_assistant_analysi
 
 def render_main(page: Page) -> None:
     if page == Page.VISAO_GERAL:
-        render_overview_page()
+        OverviewPage().render()
     elif page == Page.KPIS_DESCRITIVOS:
         render_descriptive_kpis_page()
     elif page == Page.KPIS_COMPORTAMENTAIS:

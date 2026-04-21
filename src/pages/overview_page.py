@@ -1,84 +1,31 @@
-import streamlit as st
-import polars as pl
-from src.components.cards import Card
-from src.components.bar_chart import BarChart
-from src.components.pie_chart import PieChart
+from src.components import MetricsApiClient, OverviewCardsSection
 
 
-def render() -> None:
-    card = Card(
-        title="Total de usuários",
-        value=1000000,
-        margin_left="0.0rem",
-        margin_right="0.0rem",
-        margin_bottom="1.0rem",
-        margin_top="-1.8rem",
-    )
-    card.render()
+class OverviewPage:
+    def __init__(self):
+        self.metrics_api_client = MetricsApiClient()
 
-    data = [
-        {
-            "dimension": "Brasil",
-            "category": "Credit Card",
-            "value": 120,
-        },
-        {
-            "dimension": "Brasil",
-            "category": "Debit Card",
-            "value": 80,
-        },
-        {
-            "dimension": "Brasil",
-            "category": "PayPal",
-            "value": 150,
-        },
-        {"dimension": "EUA", "category": "Credit Card", "value": 200},
-        {
-            "dimension": "EUA",
-            "category": "Debit Card",
-            "value": 100,
-        },
-        {"dimension": "EUA", "category": "PayPal", "value": 130},
-        {
-            "dimension": "UK",
-            "category": "Credit Card",
-            "value": 180,
-        },
-        {
-            "dimension": "UK",
-            "category": "Debit Card",
-            "value": 90,
-        },
-        {
-            "dimension": "UK",
-            "category": "PayPal",
-            "value": 110,
-        },
-    ]
-
-    with st.container(border=True):
-        df = pl.DataFrame(data)
-        bar_chart = BarChart(
-            title="Total de usuários", df=df, x="dimension", y="value", group=True
+    def render(self) -> None:
+        overview_cards_section = OverviewCardsSection(
+            total_users_value=self._fetch_total_users(),
+            conversion_rate_value=self._fetch_conversion_rate(),
+            churn_rate_value=self._fetch_churn_rate(),
+            dau_value=self._fetch_dau(),
         )
-        bar_chart.render()
+        overview_cards_section.render()
 
-    with st.container(border=True):
-        df = pl.DataFrame(
-            [
-                {
-                    "dimension": "Brasil",
-                    "value": 120,
-                },
-                {
-                    "dimension": "EUA",
-                    "value": 200,
-                },
-                {
-                    "dimension": "UK",
-                    "value": 180,
-                },
-            ]
-        )
-        pie_chart = PieChart(title="Total de usuários", df=df, x="dimension", y="value")
-        pie_chart.render()
+    def _fetch_total_users(self) -> int:
+        total_users = self.metrics_api_client.fetch_total_users()
+        return total_users[0]["value"] if total_users else 0
+
+    def _fetch_conversion_rate(self) -> int:
+        conversion_rate = self.metrics_api_client.fetch_avg_purchase_conversion_rate()
+        return conversion_rate[0]["value"] if conversion_rate else 0
+
+    def _fetch_churn_rate(self) -> int:
+        churn_rate = self.metrics_api_client.fetch_churn_rate()
+        return churn_rate[0]["value"] if churn_rate else 0
+
+    def _fetch_dau(self) -> int:
+        dau = self.metrics_api_client.fetch_avg_daily_session_time()
+        return dau[0]["value"] if dau else 0
