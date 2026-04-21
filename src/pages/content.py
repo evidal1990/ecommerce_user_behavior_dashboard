@@ -1,7 +1,5 @@
 """Conteúdo da área principal (por página)."""
 
-import streamlit as st
-
 from src.consts.page_enum import Page
 from src.pages.overview_page import render as render_overview_page
 from src.pages.descriptive_kpis_page import render as render_descriptive_kpis_page

@@ -37,5 +37,5 @@ class BarChart(Chart):
                 y=self.y,
                 barmode="stack",
             )
-        
+
         super().plot(fig)

@@ -20,6 +20,5 @@ class PieChart(Chart):
         )
 
     def render(self) -> None:
-        fig = px.pie(self.df, values=self.y, names=self.x, hole=0.4)
-        fig.update_traces(textinfo="percent+label")
+        fig = px.pie(self.df, values=self.y, names=self.x, hole=0.4,)
         super().plot(fig)

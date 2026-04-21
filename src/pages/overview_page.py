@@ -2,25 +2,17 @@ import streamlit as st
 import polars as pl
 from src.components.cards import Card
 from src.components.bar_chart import BarChart
+from src.components.pie_chart import PieChart
 
 
 def render() -> None:
-    st.markdown(
-        f"""<h1 style="
-        margin-top: -3.50rem;
-        margin-bottom: 0.5rem;
-        text-align: center;
-        ">Visão Geral</h1>""",
-        unsafe_allow_html=True,
-    )
-
     card = Card(
         title="Total de usuários",
         value=1000000,
         margin_left="0.0rem",
         margin_right="0.0rem",
-        margin_bottom="0.0rem",
-        margin_top="0.0rem",
+        margin_bottom="1.0rem",
+        margin_top="-1.8rem",
     )
     card.render()
 
@@ -64,8 +56,29 @@ def render() -> None:
         },
     ]
 
-    df = pl.DataFrame(data)
-    chart = BarChart(
-        title="Total de usuários", df=df, x="dimension", y="value", group=True
-    )
-    chart.render()
+    with st.container(border=True):
+        df = pl.DataFrame(data)
+        bar_chart = BarChart(
+            title="Total de usuários", df=df, x="dimension", y="value", group=True
+        )
+        bar_chart.render()
+
+    with st.container(border=True):
+        df = pl.DataFrame(
+            [
+                {
+                    "dimension": "Brasil",
+                    "value": 120,
+                },
+                {
+                    "dimension": "EUA",
+                    "value": 200,
+                },
+                {
+                    "dimension": "UK",
+                    "value": 180,
+                },
+            ]
+        )
+        pie_chart = PieChart(title="Total de usuários", df=df, x="dimension", y="value")
+        pie_chart.render()
