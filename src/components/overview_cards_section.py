@@ -1,8 +1,5 @@
 import streamlit as st
-from src.components.total_users_card import TotalUsersCard
-from src.components.conversion_rate_card import ConversionRateCard
-from src.components.churn_rate_card import ChurnRateCard
-from src.components.dau_card import DAUCard
+from src.components.cards import Card
 
 
 class OverviewCardsSection:
@@ -21,10 +18,27 @@ class OverviewCardsSection:
     def render(self) -> None:
         col1, col2, col3, col4 = st.columns(4, gap="small")
         with col1:
-            TotalUsersCard(self.total_users_value).render()
+            Card(
+                title="Total de Usuários",
+                value=self.total_users_value,
+                background=("linear-gradient(180deg, #3A0CA3 0%, #7209B7 100%);"),
+            ).render()
         with col2:
-            ConversionRateCard(self.conversion_rate_value).render()
+            Card(
+                title="Taxa de Conversão Média",
+                value=self.conversion_rate_value,
+                background=("linear-gradient(180deg, #3E8E41 0%, #256D2A 100%);"),
+            ).render()
         with col3:
-            ChurnRateCard(self.churn_rate_value).render()
+            Card(
+                title="Taxa de Churn Média",
+                value=self.churn_rate_value,
+                background=("linear-gradient(135deg, #E63946 0%, #9B2226 100%);"),
+            ).render()
         with col4:
-            DAUCard(self.dau_value).render()
+            Card(
+                title="Tempo Médio de Sessão",
+                value=self.dau_value,
+                background=("linear-gradient(180deg, #3B82F6 0%, #1E40AF 100%);"),
+                value_suffix=" min",
+            ).render()

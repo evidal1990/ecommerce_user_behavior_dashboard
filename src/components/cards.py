@@ -3,7 +3,7 @@ import streamlit as st
 
 # Dimensões partilhadas por todos os cards.
 _CARD_WIDTH = "420px"
-_CARD_MIN_HEIGHT = "160px"
+_CARD_MIN_HEIGHT = "120px"
 
 
 def format_val(value: float) -> str:
@@ -37,9 +37,11 @@ class Card:
         margin_top: str = "0.0rem",
         padding: str = "20px",
         padding_top: str = "0.0rem",
+        value_suffix: str = "",
     ):
         self.title = title
         self.value = value
+        self.value_suffix = value_suffix
         self.background = background
         self.color = color
         self.margin_left = margin_left
@@ -48,6 +50,12 @@ class Card:
         self.margin_top = margin_top
         self.padding = padding
         self.padding_top = padding_top
+
+    def _format_value_html(self) -> str:
+        if self.value_suffix:
+            number = format_val(float(self.value))
+            return f"{number}{html.escape(self.value_suffix)}"
+        return format_number(self.value)
 
     def render(self) -> None:
         # Em st.columns(N) a coluna é ~1/N da página. width fixo = _CARD_WIDTH não “cresce”
@@ -75,8 +83,8 @@ class Card:
                     padding-top: {self.padding_top};
                     margin-left: auto;
                     margin-right: auto;
-                    margin-bottom: "0.0rem";
-                    margin-top: "0.0rem";
+                    margin-bottom: {self.margin_bottom};
+                    margin-top: {self.margin_top};
                     box-sizing: border-box;
                     overflow: hidden;
                     word-break: break-word;
@@ -93,7 +101,7 @@ class Card:
                         color: {self.color};
                         font-weight: bold;
                         text-align: center;
-                    ">{format_number(self.value)}</div>
+                    ">{self._format_value_html()}</div>
                 </div>
             </div>
             """,
