@@ -12,12 +12,16 @@ class BarChart(Chart):
         x: str = "dimension",
         y: str = "value",
         group: bool = False,
+        layout_height: int | None = None,
+        layout_margin: dict[str, float] | None = None,
     ):
         super().__init__(
             title=title,
             df=df if df is not None else pl.DataFrame(),
             x=x,
             y=y,
+            layout_height=layout_height,
+            layout_margin=layout_margin,
         )
         self.group = group
 

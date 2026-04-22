@@ -251,4 +251,16 @@ KPI_DEFINITIONS = {
         "type": "count",
         "category": "descritivo",
     },
+    "top_countries": {
+        "description": "Top 5 países com mais usuários",
+        "dimension": "top_countries",
+        "type": "list",
+        "category": "descritivo",
+    },
+    "top_product_categories": {
+        "description": "Top 5 categorias de produtos com mais usuários",
+        "dimension": "top_product_categories",
+        "type": "list",
+        "category": "descritivo",
+    },
 }

@@ -223,3 +223,17 @@ class UserApiClient(BaseApiClient):
             USERS_KPI_TYPE,
             params={"group_by": config["dimension"]},
         )
+
+    def fetch_top_countries(self) -> list[dict]:
+        config = KPI_DEFINITIONS["top_countries"]
+        return self.fetch_data(
+            USERS_KPI_TYPE,
+            params={"group_by": config["dimension"]},
+        )
+
+    def fetch_top_product_categories(self) -> list[dict]:
+        config = KPI_DEFINITIONS["top_product_categories"]
+        return self.fetch_data(
+            USERS_KPI_TYPE,
+            params={"group_by": config["dimension"]},
+        )
