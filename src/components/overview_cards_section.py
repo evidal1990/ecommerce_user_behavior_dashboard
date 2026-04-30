@@ -15,30 +15,51 @@ class OverviewCardsSection:
         self.churn_rate_value = churn_rate_value
         self.dau_value = dau_value
 
+    def _render_card(
+        self,
+        title: str,
+        value: int,
+        color1: int,
+        color2: str,
+        color3: str,
+    ) -> None:
+        Card(
+            title=title,
+            value=value,
+            background=(f"linear-gradient({color1}deg, {color2} 0%, {color3} 100%);"),
+        ).render()
+
     def render(self) -> None:
         col1, col2, col3, col4 = st.columns(4, gap="small")
         with col1:
-            Card(
+            self._render_card(
                 title="Total de Usuários",
                 value=self.total_users_value,
-                background=("linear-gradient(180deg, #3A0CA3 0%, #7209B7 100%);"),
-            ).render()
+                color1=180,
+                color2="#3A0CA3",
+                color3="#7209B7",
+            )
         with col2:
-            Card(
+            self._render_card(
                 title="Taxa de Conversão Média",
                 value=self.conversion_rate_value,
-                background=("linear-gradient(180deg, #3E8E41 0%, #256D2A 100%);"),
-            ).render()
+                color1=180,
+                color2="#3E8E41",
+                color3="#256D2A",
+            )
         with col3:
-            Card(
+            self._render_card(
                 title="Taxa de Churn Média",
                 value=self.churn_rate_value,
-                background=("linear-gradient(135deg, #E63946 0%, #9B2226 100%);"),
-            ).render()
+                color1=135,
+                color2="#E63946",
+                color3="#9B2226",
+            )
         with col4:
-            Card(
+            self._render_card(
                 title="Tempo Médio de Sessão",
                 value=self.dau_value,
-                background=("linear-gradient(180deg, #3B82F6 0%, #1E40AF 100%);"),
-                value_suffix=" min",
-            ).render()
+                color1=180,
+                color2="#3B82F6",
+                color3="#1E40AF",
+            )
