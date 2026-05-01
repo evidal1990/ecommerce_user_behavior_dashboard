@@ -1,13 +1,10 @@
-"""Componentes reutilizáveis da UI (sidebar, etc.)."""
-from src.clients.metrics_api_client import MetricsApiClient
-from src.clients.user_api_client import UserApiClient
-from src.components.overview_cards_section import OverviewCardsSection
-from src.components.overview_graph_section import OverviewGraphSection
+from src.components.bar_chart import BarChart
+from src.components.pie_chart import PieChart
+from src.components.cards import Card
 
 
 __all__ = [
-    "OverviewCardsSection",
-    "MetricsApiClient",
-    "UserApiClient",
-    "OverviewGraphSection",
+    "BarChart",
+    "PieChart",
+    "Card",
 ]

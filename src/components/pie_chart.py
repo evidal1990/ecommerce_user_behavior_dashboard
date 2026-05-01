@@ -3,12 +3,10 @@ import plotly.express as px
 import streamlit as st
 from plotly.graph_objects import Figure
 
-from src.components.chart import Chart
-
 _PIE_MARGIN_FALLBACK = {"l": 12.0, "r": 12.0, "t": 44.0, "b": 40.0}
 
 
-class PieChart(Chart):
+class PieChart():
     def __init__(
         self,
         title: str,
@@ -18,14 +16,12 @@ class PieChart(Chart):
         layout_height: int | None = None,
         layout_margin: dict[str, float] | None = None,
     ):
-        super().__init__(
-            title=title,
-            df=df if df is not None else pl.DataFrame(),
-            x=x,
-            y=y,
-            layout_height=layout_height,
-            layout_margin=layout_margin,
-        )
+        self.title = title
+        self.df = df if df is not None else pl.DataFrame()
+        self.x = x
+        self.y = y
+        self.layout_height = layout_height
+        self.layout_margin = layout_margin
 
     def render(self) -> None:
         fig = px.pie(
@@ -80,4 +76,8 @@ class PieChart(Chart):
                 size=14,
             ),
         )
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(
+            fig,
+            width="stretch",
+            height="stretch",
+        )
