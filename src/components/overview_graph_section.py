@@ -1,12 +1,14 @@
 import streamlit as st
 import polars as pl
 from src.components.bar_chart import BarChart
+from src.components.pie_chart import PieChart
 from src.services.transform import process_kpi
 
 _SECTION_TOP_PX = 40
 _CONTAINER_TOP_PX = 8
 _CHART_LAYOUT_HEIGHT_PX = 300
-_CHART_LAYOUT_MARGIN = {"l": 48.0, "r": 24.0, "t": 26.0, "b": 0.0}
+BAR_CHART_LAYOUT_MARGIN = {"l": 24.0, "r": 24.0, "t": 72.0, "b": 0.0}
+_PIE_LAYOUT_MARGIN = {"l": 12.0, "r": 12.0, "t": 26.0, "b": 0.0}
 
 
 def _block_spacer_px(height_px: int) -> None:
@@ -29,9 +31,11 @@ class OverviewGraphSection:
         self,
         top_countries: list[dict],
         top_product_categories: list[dict],
+        premium_adoption: list[dict],
     ):
         self.top_countries_df = process_kpi(top_countries)
         self.top_product_categories_df = process_kpi(top_product_categories)
+        self.premium_adoption_df = process_kpi(premium_adoption)
 
     def _render_bar_chart(
         self,
@@ -44,19 +48,44 @@ class OverviewGraphSection:
                 title=title,
                 df=df,
                 layout_height=_CHART_LAYOUT_HEIGHT_PX,
-                layout_margin=_CHART_LAYOUT_MARGIN,
+                layout_margin=BAR_CHART_LAYOUT_MARGIN,
+            ).render()
+
+    def _render_pie_chart(
+        self,
+        title: str,
+        df: pl.DataFrame,
+    ) -> None:
+        with st.container(border=True):
+            _block_spacer_px(_CONTAINER_TOP_PX)
+            PieChart(
+                title=title,
+                df=df,
+                layout_height=_CHART_LAYOUT_HEIGHT_PX,
+                layout_margin=_PIE_LAYOUT_MARGIN,
             ).render()
 
     def render(self) -> None:
         _block_spacer_px(_SECTION_TOP_PX)
-        col1, col2 = st.columns(2, gap="medium")
-        with col1:
+        row_1_col1, row_1_col2 = st.columns(2, gap="small")
+        with row_1_col1:
+            self._render_pie_chart(
+                title="Adesão ao Plano Premium",
+                df=self.premium_adoption_df,
+            )
+        with row_1_col2:
             self._render_bar_chart(
                 title="Top 3 Países Mais Visitados",
                 df=self.top_countries_df,
             )
-        with col2:
+        row_2_col1, row_2_col2 = st.columns(2, gap="small")
+        with row_2_col1:
             self._render_bar_chart(
                 title="Top 3 Categorias de Produtos Preferidas",
                 df=self.top_product_categories_df,
+            )
+        with row_2_col2:
+            self._render_pie_chart(
+                title="Distribuição de Usuários por Adesão ao Plano Premium",
+                df=self.premium_adoption_df,
             )

@@ -33,34 +33,37 @@ class MetricsApiClient(BaseApiClient):
             params={"metric": config["dimension"]},
         )
 
-    def fetch_avg_daily_session_time(self) -> list[dict]:
+    def fetch_avg_daily_session_time(self) -> int:
         config = KPI_DEFINITIONS["average_daily_session_time"]
-        return self.fetch_data(
+        data = self.fetch_data(
             METRICS_KPI_TYPE,
             params={"metric": config["dimension"]},
         )
+        return data[0]["value"] if data else 0
 
     def fetch_avg_product_views_per_day(self) -> list[dict]:
         config = KPI_DEFINITIONS["average_product_views_per_day"]
         return self.fetch_data(METRICS_KPI_TYPE, params={"metric": config["dimension"]})
 
-    def fetch_avg_purchase_conversion_rate(self) -> list[dict]:
+    def fetch_avg_purchase_conversion_rate(self) -> int:
         config = KPI_DEFINITIONS["average_purchase_conversion_rate"]
-        return self.fetch_data(
+        data = self.fetch_data(
             METRICS_KPI_TYPE,
             params={"metric": config["dimension"]},
         )
+        return data[0]["value"] if data else 0
 
     def fetch_avg_referral_count(self) -> list[dict]:
         config = KPI_DEFINITIONS["average_referral_count"]
         return self.fetch_data(METRICS_KPI_TYPE, params={"metric": config["dimension"]})
 
-    def fetch_churn_rate(self) -> list[dict]:
+    def fetch_churn_rate(self) -> int:
         config = KPI_DEFINITIONS["churn_rate"]
-        return self.fetch_data(
+        data = self.fetch_data(
             METRICS_KPI_TYPE,
             params={"metric": config["dimension"]},
         )
+        return data[0]["value"] if data else 0
 
     def fetch_net_promoter_score(self) -> list[dict]:
         config = KPI_DEFINITIONS["net_promoter_score"]
@@ -69,9 +72,10 @@ class MetricsApiClient(BaseApiClient):
             params={"metric": config["dimension"]},
         )
 
-    def fetch_total_users(self) -> list[dict]:
+    def fetch_total_users(self) -> int:
         config = KPI_DEFINITIONS["total_users"]
-        return self.fetch_data(
+        data = self.fetch_data(
             METRICS_KPI_TYPE,
             params={"metric": config["dimension"]},
         )
+        return data[0]["value"] if data else 0

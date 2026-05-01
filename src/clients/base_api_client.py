@@ -19,7 +19,7 @@ def _params_key(params: dict | None) -> tuple[tuple[str, str], ...]:
     return tuple(sorted((str(k), str(v)) for k, v in params.items()))
 
 
-_CACHE_TTL_SECONDS = int(os.getenv("API_CACHE_TTL_SECONDS", "600"))
+_CACHE_TTL_SECONDS = int(os.getenv("API_CACHE_TTL_SECONDS", "86040"))
 
 
 @st.cache_data(ttl=_CACHE_TTL_SECONDS)

@@ -8,7 +8,7 @@ _XAXIS = dict(title="", tickfont=_AXIS_TICK_FONT, tickangle=0)
 _YAXIS = dict(title="", tickfont=_AXIS_TICK_FONT)
 _LEGEND = dict(
     title_text="",
-    orientation="h",
+    orientation="v",
     yanchor="bottom",
     y=1.02,
     xanchor="center",
@@ -35,12 +35,20 @@ class Chart:
         self.layout_height = layout_height
         self.layout_margin = layout_margin
 
-    def plot(self, fig: Figure) -> None:
-        margin = self.layout_margin if self.layout_margin is not None else _LAYOUT_MARGIN
+    def plot(
+        self,
+        fig: Figure,
+    ) -> None:
+        margin = (
+            self.layout_margin if self.layout_margin is not None else _LAYOUT_MARGIN
+        )
         layout: dict = {
             "dragmode": False,
-            "title": self.title,
-            "title_font_size": 18,
+            "title": dict(
+                text=self.title,
+                font=dict(size=18),
+                pad=dict(b=24),
+            ),
             "margin": margin,
             "xaxis": _XAXIS,
             "yaxis": _YAXIS,
@@ -51,22 +59,15 @@ class Chart:
         if self.layout_height is not None:
             layout["height"] = self.layout_height
         fig.update_layout(**layout)
-        is_pie = bool(fig.data and getattr(fig.data[0], "type", None) == "pie")
-        if is_pie:
-            fig.update_traces(
-                textinfo="percent",
-                hovertemplate="%{label}: %{value} (%{percent})<extra></extra>",
-            )
-        else:
-            max_total = self.df.group_by(self.x).agg(pl.col(self.y).sum()).max()[self.y]
-            fig.update_yaxes(range=[0, max_total * 1.1])
-            fig.update_xaxes(range=[0, self.df[self.x].max()])
-            fig.update_traces(
-                hovertemplate="%{x}: %{y}<extra></extra>",
-                texttemplate="%{y}",
-                textposition="auto",
-                textfont_size=14,
-                textfont_color="white",
-                textfont_weight="bold",
-            )
+        max_total = self.df.group_by(self.x).agg(pl.col(self.y).sum()).max()[self.y]
+        fig.update_yaxes(range=[0, max_total * 1.1])
+        fig.update_xaxes(range=[0, self.df[self.x].max()])
+        fig.update_traces(
+            hovertemplate="%{x}: %{y}<extra></extra>",
+            texttemplate="%{y}",
+            textposition="auto",
+            textfont_size=14,
+            textfont_color="white",
+            textfont_weight="bold",
+        )
         st.plotly_chart(fig, width="stretch")
