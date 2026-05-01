@@ -6,7 +6,7 @@ USERS_KPI_TYPE = "users"
 
 class UserApiClient(BaseApiClient):
     def fetch_users_by_age_group(self) -> list[dict]:
-        config = KPI_DEFINITIONS["users_by_age_group"]
+        config = KPI_DEFINITIONS["users_by_age"]
         return self.fetch_data(
             USERS_KPI_TYPE,
             params={"group_by": config["dimension"]},

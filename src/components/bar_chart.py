@@ -31,6 +31,7 @@ class BarChart():
         group: bool = False,
         layout_height: int | None = None,
         layout_margin: dict[str, float] | None = None,
+        angle: int = 0,
     ):
         self.group = group
         self.title = title
@@ -39,6 +40,7 @@ class BarChart():
         self.y = y
         self.layout_height = layout_height
         self.layout_margin = layout_margin
+        self.angle = angle
 
     def render(self) -> None:
         if self.group:
@@ -100,12 +102,13 @@ class BarChart():
             fig.update_xaxes(range=[0, self.df[self.x].max()])
         fig.update_xaxes(
             automargin=False,
+            tickangle=self.angle,
         )
         fig.update_traces(
             hovertemplate="%{x}: %{y}<extra></extra>",
             texttemplate="%{y}",
             textposition="auto",
-            textfont_size=14,
+            textfont_size=12,
             textfont_color="white",
             textfont_weight="bold",
         )

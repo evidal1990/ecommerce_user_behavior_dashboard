@@ -5,19 +5,10 @@ from src.clients import (
     MetricsApiClient,
     UserApiClient,
 )
-from src.components import (
-    Card,
-    BarChart,
-    PieChart,
-)
 from src.pages.base_page import BasePage
 
 
 _SECTION_TOP_PX = 40
-_CONTAINER_TOP_PX = 8
-_CHART_LAYOUT_HEIGHT_PX = 300
-_BAR_LAYOUT_MARGIN = {"l": 36.0, "r": 20.0, "t": 26.0, "b": 36.0}
-_PIE_LAYOUT_MARGIN = {"l": 12.0, "r": 12.0, "t": 26.0, "b": 0.0}
 
 
 metrics_api_client = MetricsApiClient()
@@ -25,47 +16,13 @@ user_api_client = UserApiClient()
 
 
 class OverviewPage(BasePage):
-    def _render_bar_chart(
-        self,
-        title: str,
-        df: pl.DataFrame,
-    ) -> None:
-        with st.container(border=True):
-            self._block_spacer_px(_CONTAINER_TOP_PX)
-            BarChart(
-                title=title,
-                df=df,
-                layout_height=_CHART_LAYOUT_HEIGHT_PX,
-                layout_margin=_BAR_LAYOUT_MARGIN,
-            ).render()
-
-    def _render_pie_chart(
-        self,
-        title: str,
-        df: pl.DataFrame,
-    ) -> None:
-        with st.container(border=True):
-            self._block_spacer_px(_CONTAINER_TOP_PX)
-            PieChart(
-                title=title,
-                df=df,
-                layout_height=_CHART_LAYOUT_HEIGHT_PX,
-                layout_margin=_PIE_LAYOUT_MARGIN,
-            ).render()
-
-    def _render_card(
-        self,
-        title: str,
-        value: int,
-        color1: int,
-        color2: str,
-        color3: str,
-    ) -> None:
-        Card(
-            title=title,
-            value=value,
-            background=(f"linear-gradient({color1}deg, {color2} 0%, {color3} 100%);"),
-        ).render()
+    def __init__(self):
+        super().__init__(
+            container_top_px=8,
+            chart_layout_height_px=300,
+            bar_layout_margin={"l": 36.0, "r": 20.0, "t": 26.0, "b": 36.0},
+            pie_layout_margin={"l": 12.0, "r": 12.0, "t": 26.0, "b": 0.0},
+        )
 
     def render(self) -> None:
         metrics = {
@@ -81,6 +38,11 @@ class OverviewPage(BasePage):
             "users_by_device_type": user_api_client.fetch_users_by_device_type,
         }
         data = self.fetch_all({**metrics, **users})
+
+        st.markdown(
+            '<h1 style="margin-top: -3.50rem; margin-bottom: 0.5rem;">Visão Geral</h1>',
+            unsafe_allow_html=True,
+        )
 
         # Cards
         col_card1, col_card2, col_card3, col_card4 = st.columns(4, gap="small")

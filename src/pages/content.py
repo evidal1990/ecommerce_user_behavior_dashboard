@@ -2,7 +2,7 @@
 
 from src.consts.page_enum import Page
 from src.pages.overview_page import OverviewPage
-from src.pages.descriptive_kpis_page import render as render_descriptive_kpis_page
+from src.pages.descriptive_kpis_page import DescriptiveKpisPage
 from src.pages.behavioral_kpis_page import render as render_behavioral_kpis_page
 from src.pages.operational_kpis_page import render as render_operational_kpis_page
 from src.pages.strategical_kpis_page import render as render_strategical_kpis_page
@@ -13,7 +13,7 @@ def render_main(page: Page) -> None:
     if page == Page.VISAO_GERAL:
         OverviewPage().render()
     elif page == Page.KPIS_DESCRITIVOS:
-        render_descriptive_kpis_page()
+        DescriptiveKpisPage().render()
     elif page == Page.KPIS_COMPORTAMENTAIS:
         render_behavioral_kpis_page()
     elif page == Page.KPIS_OPERACIONAIS:
