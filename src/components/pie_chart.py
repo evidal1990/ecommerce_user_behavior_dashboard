@@ -1,7 +1,6 @@
 import polars as pl
 import plotly.express as px
 import streamlit as st
-from plotly.graph_objects import Figure
 
 _PIE_MARGIN_FALLBACK = {"l": 12.0, "r": 12.0, "t": 44.0, "b": 40.0}
 
@@ -28,7 +27,7 @@ class PieChart():
             self.df,
             values=self.y,
             names=self.x,
-            hole=0.6,
+            hole=0.7,
         )
         margin = (
             self.layout_margin
@@ -69,7 +68,8 @@ class PieChart():
             insidetextfont=dict(
                 family="Arial",
                 color="white",
-                size=14,
+                size=13,
+                weight="bold",
             ),
             outsidetextfont=dict(
                 color="#333333",

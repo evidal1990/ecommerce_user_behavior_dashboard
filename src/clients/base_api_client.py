@@ -1,6 +1,8 @@
 import os
 import requests
 import streamlit as st
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from src.config import load_project_env
 
@@ -19,7 +21,36 @@ def _params_key(params: dict | None) -> tuple[tuple[str, str], ...]:
     return tuple(sorted((str(k), str(v)) for k, v in params.items()))
 
 
-_CACHE_TTL_SECONDS = int(os.getenv("API_CACHE_TTL_SECONDS", "86040"))
+_CACHE_TTL_SECONDS = int(os.getenv("API_CACHE_TTL_SECONDS", "600"))
+_HTTP_POOL_SIZE = int(os.getenv("API_HTTP_POOL_SIZE", "32"))
+_HTTP_CONNECT_TIMEOUT_SECONDS = float(os.getenv("API_HTTP_CONNECT_TIMEOUT", "5"))
+_HTTP_READ_TIMEOUT_SECONDS = float(os.getenv("API_HTTP_READ_TIMEOUT", "20"))
+_HTTP_TOTAL_RETRIES = int(os.getenv("API_HTTP_TOTAL_RETRIES", "3"))
+_HTTP_BACKOFF_FACTOR = float(os.getenv("API_HTTP_BACKOFF_FACTOR", "0.5"))
+
+
+@st.cache_resource
+def _http_session() -> requests.Session:
+    """Shared HTTP session with connection pooling across reruns."""
+    session = requests.Session()
+    retry = Retry(
+        total=_HTTP_TOTAL_RETRIES,
+        connect=_HTTP_TOTAL_RETRIES,
+        read=_HTTP_TOTAL_RETRIES,
+        status=_HTTP_TOTAL_RETRIES,
+        allowed_methods=frozenset({"GET"}),
+        status_forcelist=(429, 500, 502, 503, 504),
+        backoff_factor=_HTTP_BACKOFF_FACTOR,
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(
+        pool_connections=_HTTP_POOL_SIZE,
+        pool_maxsize=_HTTP_POOL_SIZE,
+        max_retries=retry,
+    )
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
 
 
 @st.cache_data(ttl=_CACHE_TTL_SECONDS)
@@ -33,11 +64,13 @@ def _cached_api_get(
     params = dict(params_key) if params_key else {}
     segment = endpoint.strip().strip("/")
     base = api_base_url.rstrip("/")
-    response = requests.get(
+    session = _http_session()
+    response = session.get(
         f"{base}/{segment}",
         params=params,
         headers={"x-api-key": api_key},
         verify=verify,
+        timeout=(_HTTP_CONNECT_TIMEOUT_SECONDS, _HTTP_READ_TIMEOUT_SECONDS),
     )
     if response.status_code != 200:
         raise Exception(f"Failed to fetch data from API: {response.status_code}")

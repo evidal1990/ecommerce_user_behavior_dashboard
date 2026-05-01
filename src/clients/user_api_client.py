@@ -237,3 +237,17 @@ class UserApiClient(BaseApiClient):
             USERS_KPI_TYPE,
             params={"group_by": config["dimension"]},
         )
+
+    def fetch_users_by_relationship_status(self) -> list[dict]:
+        config = KPI_DEFINITIONS["relationship_status"]
+        return self.fetch_data(
+            USERS_KPI_TYPE,
+            params={"group_by": config["dimension"]},
+        )
+
+    def fetch_users_by_shopping_time_of_day(self) -> list[dict]:
+        config = KPI_DEFINITIONS["shopping_time_of_day"]
+        return self.fetch_data(
+            USERS_KPI_TYPE,
+            params={"group_by": config["dimension"]},
+        )

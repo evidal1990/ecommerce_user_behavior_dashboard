@@ -185,6 +185,18 @@ KPI_DEFINITIONS = {
         "type": "distribution",
         "category": "comportamental",
     },
+    "users_by_relationship_status": {
+        "description": "Distribuição de usuários por status de relacionamento",
+        "dimension": "relationship_status",
+        "type": "distribution",
+        "category": "descritivo",
+    },
+     "users_by_shopping_time_of_day": {
+        "description": "Distribuição de usuários por horário de compra",
+        "dimension": "shopping_time_of_day",
+        "type": "distribution",
+        "category": "descritivo",
+    },
     "average_app_usage_frequency": {
         "description": "Média de uso da aplicação",
         "dimension": "avg_app_usage_frequency",
