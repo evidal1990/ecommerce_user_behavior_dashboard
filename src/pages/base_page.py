@@ -24,9 +24,28 @@ class BasePage:
         self._CHART_LAYOUT_HEIGHT_PX = chart_layout_height_px
         self._BAR_LAYOUT_MARGIN = bar_layout_margin
         self._PIE_LAYOUT_MARGIN = pie_layout_margin
+
     @abstractmethod
     def render(self):
         pass
+
+    def _render_title(
+        self,
+        title: str,
+    ) -> None:
+        st.markdown(
+            f"""
+                <h1 
+                    style="
+                        margin-top: -3.50rem; 
+                        margin-bottom: 0.5rem;
+                    "
+                >
+                    {title}
+                </h1>
+            """,
+            unsafe_allow_html=True,
+        )
 
     def _render_bar_chart(
         self,
@@ -35,7 +54,9 @@ class BasePage:
         angle: int = 0,
         orientation: str = "v",
     ) -> None:
-        with st.container(border=True):
+        with st.container(
+            border=True,
+        ):
             self._block_spacer_px(self._CONTAINER_TOP_PX)
             BarChart(
                 title=title,
@@ -51,7 +72,9 @@ class BasePage:
         title: str,
         df: pl.DataFrame,
     ) -> None:
-        with st.container(border=True):
+        with st.container(
+            border=True,
+        ):
             self._block_spacer_px(self._CONTAINER_TOP_PX)
             PieChart(
                 title=title,
@@ -71,14 +94,22 @@ class BasePage:
         Card(
             title=title,
             value=value,
-            background=(f"linear-gradient({color1}deg, {color2} 0%, {color3} 100%);"),
+            background=(
+                f"""
+                    linear-gradient(
+                        {color1}deg, {color2} 0%, {color3} 100%
+                    );
+                """
+            ),
         ).render()
 
     def fetch_all(
         self,
         tasks: dict,
     ):
-        with ThreadPoolExecutor(max_workers=8) as executor:
+        with ThreadPoolExecutor(
+            max_workers=8,
+        ) as executor:
             futures = {executor.submit(func): key for key, func in tasks.items()}
             results = {}
             for future in as_completed(futures):
@@ -88,15 +119,15 @@ class BasePage:
                 except Exception as e:
                     results[key] = None
                     print(f"Erro ao buscar {key}: {e}")
-        return results
+            return results
 
     def _block_spacer_px(self, height_px: int):
         st.markdown(
             f"""
-            <div style="
-                display: block;
-                height: {height_px}px;
-            ">
+                <div style="
+                    display: block;
+                    height: {height_px}px;
+                ">
             """,
             unsafe_allow_html=True,
         )

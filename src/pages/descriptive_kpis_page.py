@@ -24,10 +24,7 @@ class DescriptiveKpisPage(BasePage):
         )
 
     def render(self) -> None:
-        st.markdown(
-            '<h1 style="margin-top: -3.50rem; margin-bottom: 0.5rem;">KPIs Descritivos</h1>',
-            unsafe_allow_html=True,
-        )
+        self._render_title("Características dos Usuários")
 
         users = {
             "users_by_age_group": user_api_client.fetch_users_by_age_group,
