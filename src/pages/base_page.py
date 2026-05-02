@@ -33,6 +33,7 @@ class BasePage:
         title: str,
         df: pl.DataFrame,
         angle: int = 0,
+        orientation: str = "v",
     ) -> None:
         with st.container(border=True):
             self._block_spacer_px(self._CONTAINER_TOP_PX)
@@ -42,6 +43,7 @@ class BasePage:
                 layout_height=self._CHART_LAYOUT_HEIGHT_PX,
                 layout_margin=self._BAR_LAYOUT_MARGIN,
                 angle=angle,
+                orientation=orientation,
             ).render()
 
     def _render_pie_chart(

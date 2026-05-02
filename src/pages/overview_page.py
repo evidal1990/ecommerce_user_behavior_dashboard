@@ -20,7 +20,7 @@ class OverviewPage(BasePage):
         super().__init__(
             container_top_px=8,
             chart_layout_height_px=300,
-            bar_layout_margin={"l": 36.0, "r": 20.0, "t": 26.0, "b": 36.0},
+            bar_layout_margin={"l": 0.0, "r": 10.0, "t": 26.0, "b": 40.0},
             pie_layout_margin={"l": 12.0, "r": 12.0, "t": 26.0, "b": 0.0},
         )
 

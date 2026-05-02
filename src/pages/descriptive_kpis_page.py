@@ -39,7 +39,8 @@ class DescriptiveKpisPage(BasePage):
         )
 
         self._block_spacer_px(_SECTION_TOP_PX)
-        self._render_pie_chart(
+        self._render_bar_chart(
             title="Distribuição de Usuários por Faixa Etária",
             df=process_kpi(data["users_by_age_group"]),
+            orientation="h"
         )
