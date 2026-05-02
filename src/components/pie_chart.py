@@ -1,5 +1,8 @@
+from typing import cast
+
 import polars as pl
 import plotly.express as px
+from plotly.graph_objects import Figure
 import streamlit as st
 
 _PIE_MARGIN_FALLBACK = {"l": 12.0, "r": 12.0, "t": 44.0, "b": 40.0}
@@ -43,8 +46,40 @@ class PieChart:
             hole=0.7,
         )
 
+    def _calculate_annotations(self):
+        annotations: list[dict[str, object]] = []
+        if self.df.is_empty():
+            return annotations
+
+        max_row = self.df.sort(
+            by=[self.y, self.x],
+            descending=[True, False],
+        ).row(0, named=True)
+        max_val = cast(float, max_row[self.y])
+        sum_scalar = self.df[self.y].cast(pl.Float64).sum()
+        total = cast(float, sum_scalar) if sum_scalar is not None else 0.0
+        pct = 100.0 * max_val / total if total else 0.0
+
+        label = max_row[self.x]
+        annotations.append(
+            dict(
+                text=f"{pct:.2f}%<br>{label}",
+                x=0.5,
+                y=0.6,
+                font_size=14,
+                showarrow=False,
+                xanchor="center",
+            )
+        )
+
+        return annotations
+
     # -------- LAYOUT --------
-    def _apply_layout(self, fig):
+    def _apply_layout(
+        self,
+        fig: Figure,
+    ):
+        annotations = self._calculate_annotations()
         layout = {
             "dragmode": False,
             "template": "plotly_white",
@@ -68,6 +103,7 @@ class PieChart:
                 "font": {"size": 14},
             },
             "margin": self.margin,
+            "annotations": annotations,
         }
 
         if self.height is not None:
@@ -77,10 +113,12 @@ class PieChart:
 
     # -------- TRACES --------
     def _apply_traces(self, fig):
+        # Fatias: d3-format; `.1%` = percentual com 1 casa (Plotly sobrescreve textinfo).
+        _pct_one_dec = "%{percent:.2%}"
         fig.update_traces(
             domain={"x": [0.02, 0.98], "y": [0.28, 0.92]},
-            textinfo="percent",
-            hovertemplate="%{label}: %{value} (%{percent})<extra></extra>",
+            texttemplate=_pct_one_dec,
+            hovertemplate=f"%{{label}}: %{{value}} ({_pct_one_dec})<extra></extra>",
             insidetextfont={
                 "family": "Arial",
                 "color": "white",
