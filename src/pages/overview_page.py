@@ -1,5 +1,4 @@
 import streamlit as st
-import polars as pl
 from typing import Callable, Any
 from src.services.transform import process_kpi
 from src.clients import (
@@ -104,6 +103,7 @@ class OverviewPage(BasePage):
         data: dict[str, int],
     ) -> None:
         self._block_spacer_px(_SECTION_TOP_PX)
+        # LINHA 1
         row_graph1_col1, row_graph1_col2 = st.columns(
             2,
             gap="small",
@@ -118,6 +118,8 @@ class OverviewPage(BasePage):
                 title="Top Países Com Mais Usuários",
                 df=process_kpi(data["top_countries"]),
             )
+
+        # LINHA 2
         row_graph2_col1, row_graph2_col2 = st.columns(
             2,
             gap="small",

@@ -47,6 +47,24 @@ class BasePage:
             unsafe_allow_html=True,
         )
 
+    def _render_subtitle(
+        self,
+        subtitle: str,
+    ) -> None:
+        st.markdown(
+            f"""
+                <h2 
+                    style="
+                        margin-top: 0.5rem; 
+                        margin-bottom: 0.5rem;
+                    "
+                >
+                    {subtitle}
+                </h2>
+            """,
+            unsafe_allow_html=True,
+        )
+
     def _render_bar_chart(
         self,
         title: str,
