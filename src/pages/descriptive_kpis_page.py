@@ -1,17 +1,11 @@
 import streamlit as st
-from typing import Callable, Any
+
 from src.services.transform import process_kpi
-from src.clients import (
-    MetricsApiClient,
-    UserApiClient,
-)
+from src.services.cached_page_payloads import load_descriptive_kpis_data
 from src.pages.base_page import BasePage
 
 
 _SECTION_TOP_PX = 0
-
-metrics_api_client = MetricsApiClient()
-user_api_client = UserApiClient()
 
 
 class DescriptiveKpisPage(BasePage):
@@ -34,26 +28,12 @@ class DescriptiveKpisPage(BasePage):
         )
 
     def render(self) -> None:
-        data = self._fetch_data()
+        data = load_descriptive_kpis_data()
         self._render_title("Características dos Usuários")
         self._render_personal_kpis(data)
         self._render_professional_kpis(data)
         self._render_family_kpis(data)
         self._render_housing_kpis(data)
-
-    def _fetch_data(self) -> dict[str, int]:
-        users: dict[str, Callable[[], list[dict[str, Any]]]] = {
-            "users_by_age_group": user_api_client.fetch_users_by_age_group,
-            "users_by_annual_income": user_api_client.fetch_users_by_annual_income,
-            "users_by_gender": user_api_client.fetch_users_by_gender,
-            "users_by_neighborhood": user_api_client.fetch_users_by_neighborhood,
-            "users_by_employment_status": user_api_client.fetch_users_by_employment_status,
-            "users_by_household_size": user_api_client.fetch_users_by_household_size,
-            "users_by_has_children": user_api_client.fetch_users_by_has_children,
-            "users_by_education_level": user_api_client.fetch_users_by_education_level,
-            "users_by_relationship_status": user_api_client.fetch_users_by_relationship_status,
-        }
-        return self.fetch_all(users)
 
     def _render_personal_kpis(
         self,

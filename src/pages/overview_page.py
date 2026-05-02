@@ -1,25 +1,18 @@
 import streamlit as st
-from typing import Callable, Any
+
 from src.services.transform import process_kpi
-from src.clients import (
-    MetricsApiClient,
-    UserApiClient,
-)
+from src.services.cached_page_payloads import load_overview_data
 from src.pages.base_page import BasePage
 
 
 _SECTION_TOP_PX = 40
 
 
-metrics_api_client = MetricsApiClient()
-user_api_client = UserApiClient()
-
-
 class OverviewPage(BasePage):
     def __init__(self):
         super().__init__(
             container_top_px=8,
-            chart_layout_height_px=300,
+            chart_layout_height_px=350,
             bar_layout_margin={
                 "l": 0.0,
                 "r": 10.0,
@@ -30,36 +23,20 @@ class OverviewPage(BasePage):
                 "l": 12.0,
                 "r": 12.0,
                 "t": 26.0,
-                "b": 17.0,
+                "b": 0.0,
             },
         )
 
     def render(self) -> None:
-        data = self._fetch_data()
+        data = load_overview_data()
 
         self._render_title("Principais Indicadores")
         self._render_cards(data)
         self._render_graphs(data)
 
-
-    def _fetch_data(self) -> dict[str, int]:
-        metrics: dict[str, Callable[[], int]] = {
-            "total_users": metrics_api_client.fetch_total_users,
-            "avg_purchase_conversion_rate": metrics_api_client.fetch_avg_purchase_conversion_rate,
-            "churn_rate": metrics_api_client.fetch_churn_rate,
-            "avg_daily_session_time": metrics_api_client.fetch_avg_daily_session_time,
-        }
-        users: dict[str, Callable[[], list[dict[str, Any]]]] = {
-            "users_by_premium_adoption": user_api_client.fetch_users_by_premium_adoption,
-            "top_countries": user_api_client.fetch_top_countries,
-            "top_product_categories": user_api_client.fetch_top_product_categories,
-            "users_by_device_type": user_api_client.fetch_users_by_device_type,
-        }
-        return self.fetch_all({**metrics, **users})
-
     def _render_cards(
         self,
-        data: dict[str, int],
+        data: dict,
     ) -> None:
         col_card1, col_card2, col_card3, col_card4 = st.columns(
             4,
@@ -100,7 +77,7 @@ class OverviewPage(BasePage):
 
     def _render_graphs(
         self,
-        data: dict[str, int],
+        data: dict,
     ) -> None:
         self._block_spacer_px(_SECTION_TOP_PX)
         # LINHA 1

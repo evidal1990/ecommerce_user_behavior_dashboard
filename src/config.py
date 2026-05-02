@@ -32,6 +32,10 @@ def load_project_env() -> None:
 
 
 load_project_env()
+
+# Mesma variável de ambiente que `src/clients/base_api_client.py` usa em `_cached_api_get`.
+API_CACHE_TTL_SECONDS: int = int(os.getenv("API_CACHE_TTL_SECONDS", "600"))
+
 HEADER_ICON: Path = BASE_DIR / "icons" / "header-bar-icon.png"
 
 PAGE_TITLE = "Dashboard de KPIs de Usuários de E-commerce"

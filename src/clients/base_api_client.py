@@ -4,7 +4,7 @@ import streamlit as st
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from src.config import load_project_env
+from src.config import API_CACHE_TTL_SECONDS, load_project_env
 
 
 def _requests_verify() -> bool:
@@ -21,7 +21,6 @@ def _params_key(params: dict | None) -> tuple[tuple[str, str], ...]:
     return tuple(sorted((str(k), str(v)) for k, v in params.items()))
 
 
-_CACHE_TTL_SECONDS = int(os.getenv("API_CACHE_TTL_SECONDS", "600"))
 _HTTP_POOL_SIZE = int(os.getenv("API_HTTP_POOL_SIZE", "32"))
 _HTTP_CONNECT_TIMEOUT_SECONDS = float(os.getenv("API_HTTP_CONNECT_TIMEOUT", "5"))
 _HTTP_READ_TIMEOUT_SECONDS = float(os.getenv("API_HTTP_READ_TIMEOUT", "20"))
@@ -53,7 +52,7 @@ def _http_session() -> requests.Session:
     return session
 
 
-@st.cache_data(ttl=_CACHE_TTL_SECONDS)
+@st.cache_data(ttl=API_CACHE_TTL_SECONDS)
 def _cached_api_get(
     api_base_url: str,
     api_key: str,

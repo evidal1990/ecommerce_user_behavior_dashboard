@@ -1,15 +1,12 @@
 import streamlit as st
 import polars as pl
 from abc import abstractmethod
-from concurrent.futures import (
-    ThreadPoolExecutor,
-    as_completed,
-)
 from src.components import (
     Card,
     BarChart,
     PieChart,
 )
+from src.services.parallel_tasks import run_parallel_callables
 
 
 class BasePage:
@@ -125,19 +122,7 @@ class BasePage:
         self,
         tasks: dict,
     ):
-        with ThreadPoolExecutor(
-            max_workers=8,
-        ) as executor:
-            futures = {executor.submit(func): key for key, func in tasks.items()}
-            results = {}
-            for future in as_completed(futures):
-                key = futures[future]
-                try:
-                    results[key] = future.result()
-                except Exception as e:
-                    results[key] = None
-                    print(f"Erro ao buscar {key}: {e}")
-            return results
+        return run_parallel_callables(tasks)
 
     def _block_spacer_px(self, height_px: int):
         st.markdown(
