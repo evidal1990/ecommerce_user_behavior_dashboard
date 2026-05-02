@@ -108,18 +108,17 @@ class BarChart:
                 "range": [0, max_total * 1.1],
                 "title": "",
                 "tickfont_size": 14,
-                "automargin": False,
             }
             y_axes = {
                 "title": "",
                 "tickfont_size": 14,
+                "autorange": "reversed",
             }
         else:
             x_axes = {
                 "tickangle": self.angle,
                 "title": "",
                 "tickfont_size": 14,
-                "automargin": False,
             }
             y_axes = {
                 "range": [0, max_total * 1.1],
@@ -146,7 +145,7 @@ class BarChart:
     ):
         fig.update_traces(
             texttemplate="<b>%{x}</b>" if self._is_horizontal() else "<b>%{y}</b>",
-            textposition="auto",
+            textposition="inside",
         )
 
     # -------- HELPERS --------

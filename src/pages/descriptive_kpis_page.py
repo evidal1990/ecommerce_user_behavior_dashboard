@@ -18,7 +18,7 @@ class DescriptiveKpisPage(BasePage):
     def __init__(self):
         super().__init__(
             container_top_px=8,
-            chart_layout_height_px=300,
+            chart_layout_height_px=350,
             bar_layout_margin={"l": 36.0, "r": 20.0, "t": 26.0, "b": 36.0},
             pie_layout_margin={"l": 12.0, "r": 12.0, "t": 26.0, "b": 0.0},
         )
@@ -31,16 +31,18 @@ class DescriptiveKpisPage(BasePage):
 
         users = {
             "users_by_age_group": user_api_client.fetch_users_by_age_group,
+            "users_by_annual_income": user_api_client.fetch_users_by_annual_income,
         }
         data = self.fetch_all(users)
 
-        row_graph1_col1 = st.columns(
-            1, gap="small"
-        )
-
-        self._block_spacer_px(_SECTION_TOP_PX)
-        self._render_bar_chart(
-            title="Distribuição de Usuários por Faixa Etária",
-            df=process_kpi(data["users_by_age_group"]),
-            orientation="h"
-        )
+        row_graph2_col1, row_graph2_col2 = st.columns(2, gap="small")
+        with row_graph2_col1:
+            self._render_pie_chart(
+                title="Distribuição de Usuários por Faixa Etária",
+                df=process_kpi(data["users_by_age_group"]),
+            )
+        with row_graph2_col2:
+            self._render_pie_chart(
+                title="Distribuição de Usuários por Faixa de Renda",
+                df=process_kpi(data["users_by_annual_income"]),
+            )
